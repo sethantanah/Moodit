@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Mood Dashboard</h1>
+        
+        <!-- Filters section remains the same -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Filters</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label for="moodFilter" class="block mb-2">Mood</label>
+                    <select id="moodFilter" class="w-full p-2 border rounded">
+                        <option value="">All</option>
+                        <option value="positive">Positive</option>
+                        <option value="neutral">Neutral</option>
+                        <option value="negative">Negative</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="dayFilter" class="block mb-2">Day of Week</label>
+                    <select id="dayFilter" class="w-full p-2 border rounded">
+                        <option value="">All</option>
+                        <option value="0">Sunday</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="timeFilter" class="block mb-2">Time of Day</label>
+                    <input type="time" id="timeFilter" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label for="dateFilter" class="block mb-2">Date</label>
+                    <input type="date" id="dateFilter" class="w-full p-2 border rounded">
+                </div>
+            </div>
+            <div class="mt-4 flex space-x-4">
+                <button id="applyFilters" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Apply Filters</button>
+                <button id="clearFilters" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">Clear Filters</button>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Total Entries</h2>
+                <p class="text-4xl font-bold" id="totalEntries"></p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Latest Entry</h2>
+                <p class="text-4xl font-bold" id="latestEntry"></p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Most Common Mood</h2>
+                <p class="text-4xl font-bold" id="commonMood"></p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Mood Streak</h2>
+                <p class="text-4xl font-bold" id="moodStreak"></p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Mood Insights</h2>
+            <ul id="moodInsights" class="list-disc pl-5"></ul>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Morning -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Morning <span id="morningEmoji"></span></h2>
+                <ul>
+                    <li>Negative: <span id="morningNegative"></span></li>
+                    <li>Neutral: <span id="morningNeutral"></span></li>
+                    <li>Positive: <span id="morningPositive"></span></li>
+                </ul>
+            </div>
+
+            <!-- Afternoon -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Afternoon <span id="afternoonEmoji"></span></h2>
+                <ul>
+                    <li>Negative: <span id="afternoonNegative"></span></li>
+                    <li>Neutral: <span id="afternoonNeutral"></span></li>
+                    <li>Positive: <span id="afternoonPositive"></span></li>
+                </ul>
+            </div>
+
+            <!-- Evening -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Evening <span id="eveningEmoji"></span></h2>
+                <ul>
+                    <li>Negative: <span id="eveningNegative"></span></li>
+                    <li>Neutral: <span id="eveningNeutral"></span></li>
+                    <li>Positive: <span id="eveningPositive"></span></li>
+                </ul>
+            </div>
+
+            <!-- Night -->
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Night <span id="nightEmoji"></span></h2>
+                <ul>
+                    <li>Negative: <span id="nightNegative"></span></li>
+                    <li>Neutral: <span id="nightNeutral"></span></li>
+                    <li>Positive: <span id="nightPositive"></span></li>
+                </ul>
+            </div>
+        </div>
+    
+
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Mood Distribution</h2>
+                <canvas id="moodChart"></canvas>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Mood over Time</h2>
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Mood Trends</h2>
+                <canvas id="trendChart"></canvas>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Mood Correlations</h2>
+                <canvas id="correlationChart"></canvas>
+            </div>
+        </div>
+        
+
+        
+        <!-- <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Set Mood Goal</h2>
+            <div class="flex items-center space-x-4">
+                <input type="number" id="goalInput" class="border rounded p-2" min="1" max="7" placeholder="Days">
+                <button id="setGoal" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Set Goal</button>
+            </div>
+            <div id="goalProgress" class="mt-4"></div>
+        </div> -->
+    </div>
+
+    <script src="scripts/analytics.js"></script>
+</body>
+</html>
